@@ -1,0 +1,10 @@
+
+spring:
+  data:
+    mongodb:
+       host: 15.164.151.130
+       port: 27017
+       database: chatbot3
+       username: chatbot
+       password: cotqht123!
+       authentication-database: admin
