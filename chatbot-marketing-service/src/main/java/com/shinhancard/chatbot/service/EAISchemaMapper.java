@@ -5,29 +5,12 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.shinhancard.chatbot.dto.request.ApplyMarketingRequest;
-import com.shinhancard.chatbot.dto.request.GetMarketingRequest;
+import com.shinhancard.chatbot.dto.request.ApplyRequest;
+import com.shinhancard.chatbot.dto.request.InquiryRequest;
 
 @Component
 public class EAISchemaMapper {
-//	
-//	public Map<String, Object> mappingEAISchema(String eaiSchema, Object getClass) {
-//		Map<String, Object> result = new HashMap<>();
-//
-//		if ("CBS00029".equals(eaiSchema)) {
-//			GetMarketingRequest getMarketingRequest = (GetMarketingRequest)getClass;
-//			result.put("CLNN", getMarketingRequest.getUserId());
-//			result.put("MO_BJ_TCD", getMarketingRequest.getTargetChannel());
-//			if(getMarketingRequest.getShowsApplied()) {
-//				result.put("RG_OFF_INC_F", "Y");	
-//			}else {
-//				result.put("RG_OFF_INC_F", "N");
-//			}			
-//		}
-//		
-//
-//		return result;
-//	}
+
 
 	public Map<String, Object> mappingEAISchema(String eaiSchema, Object... getObjects) {
 		Map<String, Object> result = new HashMap<>();
@@ -35,8 +18,8 @@ public class EAISchemaMapper {
 		for (Object getObject : getObjects) {
 
 			if ("CBS00029".equals(eaiSchema)) {
-				if (getObject instanceof GetMarketingRequest) {
-					GetMarketingRequest getMarketingRequest = (GetMarketingRequest) getObject;
+				if (getObject instanceof InquiryRequest) {
+					InquiryRequest getMarketingRequest = (InquiryRequest) getObject;
 					result.put("CLNN", getMarketingRequest.getUserId());
 					result.put("MO_BJ_TCD", getMarketingRequest.getTargetChannel());
 					if (getMarketingRequest.getShowsApplied()) {
@@ -49,8 +32,8 @@ public class EAISchemaMapper {
 			}
 
 			if ("CBS00030".equals(eaiSchema)) {
-				if (getObject instanceof ApplyMarketingRequest) {
-					ApplyMarketingRequest applyMarketingRequest = (ApplyMarketingRequest) getObject;
+				if (getObject instanceof ApplyRequest) {
+					ApplyRequest applyMarketingRequest = (ApplyRequest) getObject;
 					result.put("CLNN", applyMarketingRequest.getUserId());
 					result.put("MO_N", applyMarketingRequest.getMarketingId());
 				}

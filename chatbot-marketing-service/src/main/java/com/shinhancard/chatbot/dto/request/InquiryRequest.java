@@ -1,9 +1,13 @@
 package com.shinhancard.chatbot.dto.request;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
-public class GetMarketingRequest {
+@Builder
+@ToString
+public class InquiryRequest {
 
 	private Integer start;
 	private Integer size;

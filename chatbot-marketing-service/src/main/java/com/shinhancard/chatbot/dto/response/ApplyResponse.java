@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ApplyMarketingResponse {
+public class ApplyResponse {
 	
 	private ResultCode resultCode;
 	private String marketingName;

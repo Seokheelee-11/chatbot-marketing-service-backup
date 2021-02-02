@@ -19,7 +19,7 @@ public class MarketingManage {
 	private String marketingId;
 	private String marketingName;
 	
-	private String discription;
+	private String description;
 	
 	private LocalDateTime startDate;
 	private LocalDateTime endDate;
@@ -31,9 +31,7 @@ public class MarketingManage {
 	private List<String> offers;
 
 	public Boolean canApply() {
-		Boolean result;
-		result = (canDateApply() && isEnabled());
-		return result;
+		return canDateApply() && isEnabled();
 	}
 	
 	public Boolean canDateApply() {
