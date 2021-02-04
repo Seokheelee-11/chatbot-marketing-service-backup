@@ -31,11 +31,11 @@ public class MarketingController {
 	private final MarketingManageRepository MarketingManageRepository;
 
 	@PostMapping("get")
-	public InquiryResponse getMarketing(@RequestBody InquiryRequest getMarketingRequest) {
+	public InquiryResponse inquiryMarketing(@RequestBody InquiryRequest getMarketingRequest) {
 		ResultCode resultCode;
 		List<MarketingInfo> marketingInfoes = new ArrayList<>();
 		try {
-			marketingInfoes = marketingService.getMarketing(getMarketingRequest);
+			marketingInfoes = marketingService.inquiryMarketing(getMarketingRequest);
 			resultCode = marketingInfoes.size() > 0 ? ResultCode.SUCCESS : ResultCode.FAILED;
 		} catch (Exception e) {
 			resultCode = ResultCode.FAILED;
@@ -50,8 +50,6 @@ public class MarketingController {
 
 	@PostMapping("apply")
 	public ApplyResponse applyMarketing(@RequestBody ApplyRequest applyMarketingRequest) {
-		
-		
 		return marketingService.applyMarketing(applyMarketingRequest);
 	}
 

@@ -11,7 +11,9 @@ public class InquiryRequest {
 
 	private Integer start;
 	private Integer size;
-	private String channel;
+	
+	//TODO:: 추후 채널 관련 기능 추가
+//	private String channel;
 	private String userId; // CLNN에 맵핑
 	private String targetChannel; // MO_BJ_TCD에 맵핑
 	private Boolean showsApplied; // RG_OFF_INC_F에 맵핑 True -> Y, False -> N

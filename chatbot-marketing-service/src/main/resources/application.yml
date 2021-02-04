@@ -1,4 +1,7 @@
 
+server:
+  port: 7070
+
 spring:
   data:
     mongodb:
@@ -8,3 +11,12 @@ spring:
        username: chatbot
        password: cotqht123!
        authentication-database: admin
+       
+ 
+logging:
+  level:
+    root: info
+    
+
+
+    

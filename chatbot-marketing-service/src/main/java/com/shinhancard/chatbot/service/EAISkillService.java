@@ -1,6 +1,5 @@
 package com.shinhancard.chatbot.service;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,21 +14,20 @@ import lombok.RequiredArgsConstructor;
 public class EAISkillService {
 	private final RestTemplate restTemplate;
 	
-	@Value("${chatbot.skill-service-name}")
-	String url;
-	
-	public Map<String,Object> callEAISkill(String eaiSchema, Map<String, Object> input){
+	@Value("${chatbot.skill-eai-service-name}")
+	private String url;
 
-		Map<String,Object> tempmap = new HashMap<>();
+	public Map<String,Object> callEAISkill(String eaiSchema, Map<String, Object> input){
+		String path = "";
 		if ("CBS00029".equals(eaiSchema)) {
-			url= "http://localhost:7690/marketing/track";
-			tempmap.put("seq", 2);
+			path = "/eai/schema/CBS00029";			
 		}
 		if ("CBS00030".equals(eaiSchema)) {
-			url= "http://localhost:7690/marketing/apply";
-			tempmap.put("seq", 1);
+			path = "/eai/schema/CBS00030";
 		}
-		return restTemplate.postForObject(url, tempmap, Map.class);
+		url = url + path;
+		return restTemplate.postForObject(url, input, Map.class);
 	}
 
 }
+

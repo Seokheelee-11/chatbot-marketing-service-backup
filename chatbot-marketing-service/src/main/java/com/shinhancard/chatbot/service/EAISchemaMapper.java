@@ -11,13 +11,11 @@ import com.shinhancard.chatbot.dto.request.InquiryRequest;
 @Component
 public class EAISchemaMapper {
 
-
 	public Map<String, Object> mappingEAISchema(String eaiSchema, Object... getObjects) {
 		Map<String, Object> result = new HashMap<>();
-
-		for (Object getObject : getObjects) {
-
-			if ("CBS00029".equals(eaiSchema)) {
+		
+		if ("CBS00029".equals(eaiSchema)) {
+			for (Object getObject : getObjects) {
 				if (getObject instanceof InquiryRequest) {
 					InquiryRequest getMarketingRequest = (InquiryRequest) getObject;
 					result.put("CLNN", getMarketingRequest.getUserId());
@@ -30,18 +28,19 @@ public class EAISchemaMapper {
 				}
 				break;
 			}
+		}
 
-			if ("CBS00030".equals(eaiSchema)) {
+		if ("CBS00030".equals(eaiSchema)) {
+			for (Object getObject : getObjects) {
 				if (getObject instanceof ApplyRequest) {
 					ApplyRequest applyMarketingRequest = (ApplyRequest) getObject;
 					result.put("CLNN", applyMarketingRequest.getUserId());
 					result.put("MO_N", applyMarketingRequest.getMarketingId());
 				}
-				if(getObject instanceof String) {
-					String offerId = (String)getObject;
+				if (getObject instanceof String) {
+					String offerId = (String) getObject;
 					result.put("CRD_SV_N", offerId);
 				}
-
 			}
 		}
 

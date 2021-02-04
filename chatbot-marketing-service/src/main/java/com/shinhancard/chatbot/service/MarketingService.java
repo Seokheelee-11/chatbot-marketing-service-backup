@@ -14,69 +14,96 @@ import com.shinhancard.chatbot.dto.response.ApplyResponse;
 import com.shinhancard.chatbot.entity.MarketingManage;
 import com.shinhancard.chatbot.repository.MarketingManageRepository;
 
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Builder
 public class MarketingService {
 
-	
 	private final EAISchemaMapper eaiSchemaMapper;
 	private final EAISkillService eaiSkillService;
 	private final MarketingManageRepository marketingManageRepository;
 
-	public List<MarketingInfo> getMarketing(InquiryRequest inquiryRequest) {
-
-		Map<String, Object> eaiMaprequest = eaiSchemaMapper.mappingEAISchema("CBS00029", inquiryRequest);
-		Map<String, Object> eaiMapresponse = eaiSkillService.callEAISkill("CBS00029", eaiMaprequest);
-
-		
-		return getMarketingInfoes((List<Map<String, Object>>)eaiMapresponse.get("GRID1"));
+	public List<MarketingInfo> inquiryMarketing(InquiryRequest inquiryRequest) {
+		Map<String, Object> inqueryEAIResponse = getInqueryEAIResponse(inquiryRequest);
+		List<MarketingInfo> marketingInfoes = getMarketingInfoes((List<Map<String, Object>>) inqueryEAIResponse.get("GRID1"));
+		return reSizingMarketingInfoes(marketingInfoes, inquiryRequest.getStart(), inquiryRequest.getSize());
 	}
 
-	public ApplyResponse applyMarketing(ApplyRequest applyMarketingRequest) {
+	public ApplyResponse applyMarketing(ApplyRequest applyRequest) {
 		MarketingManage marketingManage = new MarketingManage();
 		List<String> offerIds = new ArrayList<>();
+
 		try {
-			marketingManage = marketingManageRepository.findOneByMarketingId(applyMarketingRequest.getMarketingId());
+			marketingManage = marketingManageRepository.findOneByMarketingId(applyRequest.getMarketingId());
 			offerIds = marketingManage.getOffers();
 		} catch (Exception e) {
-			return ApplyResponse.builder()
-					.resultCode(ResultCode.FAILED)
-					.build();
+			return ApplyResponse.builder().resultCode(ResultCode.FAILED).build();
 		}
 
-		List<Map<String, Object>> getResponse = new ArrayList<>();
-		for (String offerId : offerIds) {
-			Map<String, Object> requestEAIMap = eaiSchemaMapper.mappingEAISchema("CBS00030", applyMarketingRequest,
-					offerId);
-			Map<String, Object> responseEAIMap = eaiSkillService.callEAISkill("CBS00030", requestEAIMap);
-			getResponse.add(responseEAIMap);
-		}
+		List<Map<String, Object>> applyEAIResponses = getApplyEAIResponse(applyRequest, offerIds);
 
-		return getApplyMarketingInfoes(marketingManage, getStatus(getResponse));
+		return getApplyMarketingInfoes(marketingManage, getStatus(applyEAIResponses));
 	}
 
-	public Boolean getStatus(List<Map<String, Object>> getResponses) {
+	public List<MarketingInfo> reSizingMarketingInfoes(List<MarketingInfo> marketingInfoes, Integer start,
+			Integer size) {
+		List<MarketingInfo> result = new ArrayList<>();
+		try {
+			if(size!=0) {
+				for (int i = start; i < start + size && i < marketingInfoes.size(); i++) {
+					result.add(marketingInfoes.get(i));
+				}	
+			}else {
+				result = marketingInfoes;
+			}				
+		} catch (Exception e) {
+			result = marketingInfoes;
+		}
+		return result;
+
+	}
+
+	public Map<String, Object> getInqueryEAIResponse(InquiryRequest inquiryRequest) {
+
+		Map<String, Object> eaiMaprequest = eaiSchemaMapper.mappingEAISchema("CBS00029", inquiryRequest);
+		Map<String, Object> eaiMapResponse = eaiSkillService.callEAISkill("CBS00029", eaiMaprequest);
+		return eaiMapResponse;
+	}
+
+	public List<Map<String, Object>> getApplyEAIResponse(ApplyRequest applyRequest, List<String> offerIds) {
+		List<Map<String, Object>> result = new ArrayList<>();
+		for (String offerId : offerIds) {
+			Map<String, Object> eaiMaprequest = eaiSchemaMapper.mappingEAISchema("CBS00030", applyRequest, offerId);
+			Map<String, Object> eaiMapResponse = eaiSkillService.callEAISkill("CBS00030", eaiMaprequest);
+			result.add(eaiMapResponse);
+		}
+		return result;
+	}
+
+	public Boolean getStatus(List<Map<String, Object>> getApplyResponses) {
 		Boolean result = true;
-		for (Map<String, Object> getResponse : getResponses) {
-			if (!"01".equals(String.valueOf(getResponse.get("PS_CCD")))) {
-				result = false;
-				break;
+		if (getApplyResponses.isEmpty()) {
+			result = false;
+		} else {
+			for (Map<String, Object> getApplyResponse : getApplyResponses) {
+				if (!"01".equals(String.valueOf(getApplyResponse.get("PS_CCD")))) {
+					result = false;
+					break;
+				}
 			}
 		}
 		return result;
 	}
 
 	public ApplyResponse getApplyMarketingInfoes(MarketingManage marketingManage, Boolean status) {
-		return ApplyResponse.builder()
-				.resultCode(status ? ResultCode.SUCCESS : ResultCode.FAILED)
+		return ApplyResponse.builder().resultCode(status ? ResultCode.SUCCESS : ResultCode.FAILED)
 				.responseMessage(status ? marketingManage.getSuccessMessage() : marketingManage.getFailureMessage())
-				.marketingName(marketingManage.getMarketingName())
-				.build();
+				.marketingName(marketingManage.getMarketingName()).build();
 	}
 
-	
 	public List<String> getOfferIds(String marketingId) {
 		List<String> result = new ArrayList<>();
 		try {
@@ -89,7 +116,7 @@ public class MarketingService {
 
 	public List<MarketingInfo> getMarketingInfoes(List<Map<String, Object>> marketingList) {
 		List<MarketingInfo> marketingInfoes = new ArrayList<>();
-		
+
 		for (Map<String, Object> marketing : marketingList) {
 			String marketingId = (String) marketing.get("MO_N");
 			try {
@@ -104,8 +131,7 @@ public class MarketingService {
 		}
 		return marketingInfoes;
 	}
-	
-	
+
 	public MarketingInfo mappingMarketingInfo(MarketingManage marketingManage) {
 		MarketingInfo result = new MarketingInfo();
 		result.setMarketingId(marketingManage.getMarketingId());
@@ -113,6 +139,5 @@ public class MarketingService {
 		result.setDescription(marketingManage.getDescription());
 		return result;
 	}
-	
 
 }
