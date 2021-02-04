@@ -1,8 +1,5 @@
-
-server:
-  port: 7070
-
 spring:
+  profiles: local 
   data:
     mongodb:
        host: 15.164.151.130
@@ -12,6 +9,8 @@ spring:
        password: cotqht123!
        authentication-database: admin
        
+server:
+  port: 7070
  
 logging:
   level:

@@ -3,7 +3,11 @@ package com.shinhancard.chatbot.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,9 +32,9 @@ import lombok.extern.slf4j.Slf4j;
 public class MarketingController {
 
 	private final MarketingService marketingService;
-	private final MarketingManageRepository MarketingManageRepository;
+	private final MarketingManageRepository marketingManageRepository;
 
-	@PostMapping("get")
+	@PostMapping("inquiry")
 	public InquiryResponse inquiryMarketing(@RequestBody InquiryRequest getMarketingRequest) {
 		ResultCode resultCode;
 		List<MarketingInfo> marketingInfoes = new ArrayList<>();
@@ -43,14 +47,41 @@ public class MarketingController {
 		return InquiryResponse.builder().resultCode(resultCode).marketingInfoes(marketingInfoes).build();
 	}
 
-	@PostMapping("manage")
-	public void setMarketingManage(@RequestBody MarketingManage marketingManage) {
-		MarketingManageRepository.save(marketingManage);
-	}
-
+	
 	@PostMapping("apply")
 	public ApplyResponse applyMarketing(@RequestBody ApplyRequest applyMarketingRequest) {
 		return marketingService.applyMarketing(applyMarketingRequest);
 	}
+	
+	
+
+	
+	@PostMapping
+	public void saveMarketingManage(@RequestBody MarketingManage marketingManage) {
+		marketingManageRepository.save(marketingManage);
+	}	
+	
+	@GetMapping()
+	public List<MarketingManage> getMarketinManageAll() {
+		return new ArrayList<>();
+	}
+	
+	@GetMapping("{id}")
+	public MarketingManage getMarketingManage(@PathVariable String id) {
+		return new MarketingManage();
+	}
+	
+	@PutMapping("{id}")
+	public MarketingManage updateMarketingManage(@PathVariable String id) {
+		return new MarketingManage();
+	}
+	
+	@DeleteMapping("{id}")
+	public void deleteMarketingManage(@PathVariable String id) {
+		marketingManageRepository.deleteById(id);
+	}
+	
+
+	
 
 }

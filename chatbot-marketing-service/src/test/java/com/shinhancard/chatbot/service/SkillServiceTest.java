@@ -40,24 +40,9 @@ public class SkillServiceTest {
 	
 	@MockBean
 	private EAISkillService eaiSkillService;
-	
-//	@MockBean
-//	private MarketingManageRepository marketingManageRepository;
-//	
+
 	@Autowired
 	private MarketingService marketingService;
-	
-//	@Autowired
-//	private EAISchemaMapper eaiSchemaMapper;
-//	
-//	@Autowired
-//	private MarketingManageRepository marketingManageRepository;
-//
-//	@Before
-//	public void setUp() {
-//		marketingService = new MarketingService(eaiSchemaMapper, eaiSkillService, marketingManageRepository);
-//	}
-
 	
 	
 	@Test

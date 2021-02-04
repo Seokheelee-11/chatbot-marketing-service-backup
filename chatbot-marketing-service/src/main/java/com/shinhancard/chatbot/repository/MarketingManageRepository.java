@@ -12,4 +12,8 @@ public interface MarketingManageRepository extends MongoRepository<MarketingMana
 	
 	MarketingManage findOneByMarketingId(String marketingId);
 	
+	
+	
+	
+	
 }
