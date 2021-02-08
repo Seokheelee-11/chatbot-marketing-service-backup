@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EAISkillService {
@@ -18,6 +20,7 @@ public class EAISkillService {
 	private String url;
 
 	public Map<String,Object> callEAISkill(String eaiSchema, Map<String, Object> input){
+		log.info("call eai-skill start");
 		String path = "";
 		if ("CBS00029".equals(eaiSchema)) {
 			path = "/eai/schema/CBS00029";			
@@ -26,7 +29,9 @@ public class EAISkillService {
 			path = "/eai/schema/CBS00030";
 		}
 		url = url + path;
-		return restTemplate.postForObject(url, input, Map.class);
+		Map<String,Object> result = restTemplate.postForObject(url, input, Map.class);
+		log.info("call eai-skill result : {}", result);
+		return result;
 	}
 
 }

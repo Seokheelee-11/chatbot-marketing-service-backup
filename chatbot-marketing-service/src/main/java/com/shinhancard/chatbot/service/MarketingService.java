@@ -16,7 +16,10 @@ import com.shinhancard.chatbot.repository.MarketingManageRepository;
 
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Builder
@@ -67,21 +70,25 @@ public class MarketingService {
 	}
 
 	public Map<String, Object> getInqueryEAIResponse(InquiryRequest inquiryRequest) {
-
+		log.info("getEaiResponse start");
 		Map<String, Object> eaiMaprequest = eaiSchemaMapper.mappingEAISchema("CBS00029", inquiryRequest);
+		log.info("mapping eai schema result : {}", eaiMaprequest);
 		Map<String, Object> eaiMapResponse = eaiSkillService.callEAISkill("CBS00029", eaiMaprequest);
 		return eaiMapResponse;
 	}
 
 	public List<Map<String, Object>> getApplyEAIResponse(ApplyRequest applyRequest, List<String> offerIds) {
 		List<Map<String, Object>> result = new ArrayList<>();
+		log.info("getEaiResponse start");
 		for (String offerId : offerIds) {
 			Map<String, Object> eaiMaprequest = eaiSchemaMapper.mappingEAISchema("CBS00030", applyRequest, offerId);
+			log.info("mapping eai schema result : {}", eaiMaprequest);			
 			Map<String, Object> eaiMapResponse = eaiSkillService.callEAISkill("CBS00030", eaiMaprequest);
 			result.add(eaiMapResponse);
 		}
 		return result;
 	}
+	
 
 	public Boolean getStatus(List<Map<String, Object>> getApplyResponses) {
 		Boolean result = true;

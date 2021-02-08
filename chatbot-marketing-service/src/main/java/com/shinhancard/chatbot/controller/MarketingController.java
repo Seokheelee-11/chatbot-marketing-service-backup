@@ -36,6 +36,7 @@ public class MarketingController {
 
 	@PostMapping("inquiry")
 	public InquiryResponse inquiryMarketing(@RequestBody InquiryRequest getMarketingRequest) {
+		log.info("Inquiry marketing start/n");
 		ResultCode resultCode;
 		List<MarketingInfo> marketingInfoes = new ArrayList<>();
 		try {
@@ -44,44 +45,40 @@ public class MarketingController {
 		} catch (Exception e) {
 			resultCode = ResultCode.FAILED;
 		}
+		
 		return InquiryResponse.builder().resultCode(resultCode).marketingInfoes(marketingInfoes).build();
 	}
 
-	
 	@PostMapping("apply")
 	public ApplyResponse applyMarketing(@RequestBody ApplyRequest applyMarketingRequest) {
 		return marketingService.applyMarketing(applyMarketingRequest);
 	}
-	
-	
 
 	
+	// marketing Managing을 위한 화면 CRUD용
 	@PostMapping
 	public void saveMarketingManage(@RequestBody MarketingManage marketingManage) {
-		marketingManageRepository.save(marketingManage);
-	}	
-	
+		marketingManageRepository.save(marketingManage);	
+	}
+
 	@GetMapping()
 	public List<MarketingManage> getMarketinManageAll() {
-		return new ArrayList<>();
+		return marketingManageRepository.findAll();
 	}
-	
+
 	@GetMapping("{id}")
 	public MarketingManage getMarketingManage(@PathVariable String id) {
-		return new MarketingManage();
+		return marketingManageRepository.findOneById(id);
 	}
-	
+
 	@PutMapping("{id}")
-	public MarketingManage updateMarketingManage(@PathVariable String id) {
-		return new MarketingManage();
+	public void updateMarketingManage(@RequestBody MarketingManage marketingManage) {
+		marketingManageRepository.save(marketingManage);
 	}
-	
+
 	@DeleteMapping("{id}")
 	public void deleteMarketingManage(@PathVariable String id) {
 		marketingManageRepository.deleteById(id);
 	}
-	
-
-	
 
 }
