@@ -16,6 +16,5 @@ logging:
   level:
     root: info
     
-
-
-    
+chatbot:
+  skill-eai-service-name: localhost:8888

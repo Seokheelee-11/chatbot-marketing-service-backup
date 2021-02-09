@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class EAISkillService {
+	
+
 	private final RestTemplate restTemplate;
 	
 	@Value("${chatbot.skill-eai-service-name}")
@@ -29,6 +31,8 @@ public class EAISkillService {
 			path = "/eai/schema/CBS00030";
 		}
 		url = url + path;
+		
+		log.info("url : {}\ninput : {}", url,input);
 		Map<String,Object> result = restTemplate.postForObject(url, input, Map.class);
 		log.info("call eai-skill result : {}", result);
 		return result;

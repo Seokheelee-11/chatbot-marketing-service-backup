@@ -30,8 +30,12 @@ public class MarketingService {
 	private final MarketingManageRepository marketingManageRepository;
 
 	public List<MarketingInfo> inquiryMarketing(InquiryRequest inquiryRequest) {
-		Map<String, Object> inqueryEAIResponse = getInqueryEAIResponse(inquiryRequest);
-		List<MarketingInfo> marketingInfoes = getMarketingInfoes((List<Map<String, Object>>) inqueryEAIResponse.get("GRID1"));
+		log.info("getEaiResponse start");
+		Map<String, Object> eaiMaprequest = eaiSchemaMapper.mappingEAISchema("CBS00029", inquiryRequest);
+		log.info("mapping eai schema result : {}", eaiMaprequest);
+		Map<String, Object> eaiMapResponse = eaiSkillService.callEAISkill("CBS00029", eaiMaprequest);
+		
+		List<MarketingInfo> marketingInfoes = getMarketingInfoes((List<Map<String, Object>>) eaiMapResponse.get("GRID1"));
 		return reSizingMarketingInfoes(marketingInfoes, inquiryRequest.getStart(), inquiryRequest.getSize());
 	}
 
@@ -45,9 +49,17 @@ public class MarketingService {
 		} catch (Exception e) {
 			return ApplyResponse.builder().resultCode(ResultCode.FAILED).build();
 		}
-
-		List<Map<String, Object>> applyEAIResponses = getApplyEAIResponse(applyRequest, offerIds);
-
+		
+		List<Map<String, Object>> applyEAIResponses = new ArrayList<>();
+		
+		log.info("getEaiResponse start");
+		for (String offerId : offerIds) {
+			Map<String, Object> eaiMaprequest = eaiSchemaMapper.mappingEAISchema("CBS00030", applyRequest, offerId);
+			log.info("mapping eai schema result : {}", eaiMaprequest);			
+			Map<String, Object> eaiMapResponse = eaiSkillService.callEAISkill("CBS00030", eaiMaprequest);
+			applyEAIResponses.add(eaiMapResponse);
+		}		
+		
 		return getApplyMarketingInfoes(marketingManage, getStatus(applyEAIResponses));
 	}
 

@@ -1,6 +1,5 @@
 package com.shinhancard.chatbot.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -12,88 +11,33 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import com.shinhancard.chatbot.domain.MarketingInfo;
-import com.shinhancard.chatbot.domain.ResultCode;
-import com.shinhancard.chatbot.dto.request.ApplyRequest;
-import com.shinhancard.chatbot.dto.request.InquiryRequest;
-import com.shinhancard.chatbot.dto.response.ApplyResponse;
-import com.shinhancard.chatbot.dto.response.InquiryResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @ActiveProfiles("local")
 @RunWith(SpringRunner.class)
-@SpringBootTest(// @formatter:off
-//		classes = {MarketingService.class, EAISchemaMapper.class} 
-// @formatter:on
+@SpringBootTest(
+//		classes = {EAISkillService.class}
 )
-//@AutoConfigureMockMvc
-public class SkillServiceTest {
-
-	@MockBean
-	private EAISkillService eaiSkillService;
+public class EaiCallTest {
 
 	@Autowired
-	private MarketingService marketingService;
-
-
-	@Test
-	public void inquiryTest() {
-		setInquiryEaiSkillService();
-
-		InquiryRequest inquiryRequest = InquiryRequest.builder().showsApplied(false).targetChannel("F57")
-				.userId("P123456789").start(0).size(0).build();
-
-		log.info("Input inquiry Request : {} ", inquiryRequest);
-
-		MarketingInfo marketingInfo1 = new MarketingInfo("신한데이1", "A010ABLDI",
-				"(광고)[신한카드]@@ 고객님 신한카드 이용하시고@@ 쿠폰 받아가세요~@@블라블라블라@@블라블라블라@@블라블라블라@@블라블라블라");
-		MarketingInfo marketingInfo2 = new MarketingInfo("신한데이2", "A010ABLDJ",
-				"22(광고)[신한카드]@@ 고객님 신한카드 이용하시고@@ 쿠폰 받아가세요~@@블라블라블라@@블라블라블라@@블라블라블라@@블라블라블라");
-		List<MarketingInfo> marketingInfoes = new ArrayList<MarketingInfo>();
-		marketingInfoes.add(marketingInfo1);
-		marketingInfoes.add(marketingInfo2);
-
-		InquiryResponse inquiryResponse = InquiryResponse.builder().resultCode(ResultCode.SUCCESS)
-				.marketingInfoes(marketingInfoes).build();
-
-		log.info("\ninput : {}, \noutput : {}\n", inquiryRequest, inquiryResponse);
-		log.info("result = {}", this.marketingService.inquiryMarketing(inquiryRequest));
-
-		assertThat(marketingService.inquiryMarketing(inquiryRequest)).isEqualTo(marketingInfoes);
-	}
-
-	@Test
-	public void applyTest_Failed() {
-		setApplyEAISkillService_Failed();
-
-		ApplyRequest applyRequest = ApplyRequest.builder().userId("P123456789").marketingId("A010ABLDI").build();
-		ApplyResponse applyResponse = ApplyResponse.builder().resultCode(ResultCode.SUCCESS).marketingName("신한데이1")
-				.responseMessage("등록실패").build();
-		assertThat(marketingService.applyMarketing(applyRequest).getMarketingName())
-				.isEqualTo(applyResponse.getMarketingName());
-		assertThat(marketingService.applyMarketing(applyRequest).getResponseMessage())
-				.isEqualTo(applyResponse.getResponseMessage());
-	}
+	private EAISkillService eaiSkillService;
 	
 	@Test
-	public void applyTest_Success() {
-		setApplyEAISkillService_Success();
-
-		ApplyRequest applyRequest = ApplyRequest.builder().userId("P123456789").marketingId("A010ABLDI").build();
-		ApplyResponse applyResponse = ApplyResponse.builder().resultCode(ResultCode.SUCCESS).marketingName("신한데이1")
-				.responseMessage("등록성공").build();
-		assertThat(marketingService.applyMarketing(applyRequest).getMarketingName())
-				.isEqualTo(applyResponse.getMarketingName());
-		assertThat(marketingService.applyMarketing(applyRequest).getResponseMessage())
-				.isEqualTo(applyResponse.getResponseMessage());
+	public void eaiTest() {
+		Map<String, Object> test29Input = new HashMap<>();
+		test29Input.put("CLNN", "P123456789");
+		test29Input.put("MO_BJ_TCD", "F57");
+		test29Input.put("RG_OFF_INC_F", "N");
+		
+		eaiSkillService.callEAISkill("CBS00029", test29Input);
+		
+		
 	}
-
 	
 
 	public void setInquiryEaiSkillService() {
@@ -180,5 +124,5 @@ public class SkillServiceTest {
 		log.info("callEAISkill : {}", eaiSkillService.callEAISkill("CBS00030", test30Input1));
 		log.info("callEAISkill : {}", eaiSkillService.callEAISkill("CBS00030", test30Input2));
 	}
-
+	
 }
