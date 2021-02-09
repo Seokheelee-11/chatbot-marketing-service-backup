@@ -15,11 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class EAISkillService {
 	
-
 	private final RestTemplate restTemplate;
 	
 	@Value("${chatbot.skill-eai-service-name}")
-	private String url;
+	private String domain;
 
 	public Map<String,Object> callEAISkill(String eaiSchema, Map<String, Object> input){
 		log.info("call eai-skill start");
@@ -30,7 +29,8 @@ public class EAISkillService {
 		if ("CBS00030".equals(eaiSchema)) {
 			path = "/eai/schema/CBS00030";
 		}
-		url = url + path;
+		
+		String url = domain + path;
 		
 		log.info("url : {}\ninput : {}", url,input);
 		Map<String,Object> result = restTemplate.postForObject(url, input, Map.class);
