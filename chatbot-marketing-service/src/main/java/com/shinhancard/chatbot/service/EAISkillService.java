@@ -19,18 +19,21 @@ public class EAISkillService {
 	
 	@Value("${chatbot.skill-eai-service-name}")
 	private String domain;
+	private String commonPath = "/skills/eai";
 
 	public Map<String,Object> callEAISkill(String eaiSchema, Map<String, Object> input){
 		log.info("call eai-skill start");
 		String path = "";
 		if ("CBS00029".equals(eaiSchema)) {
-			path = "/eai/schema/CBS00029";			
+			path = "/CBS00029";			
 		}
 		if ("CBS00030".equals(eaiSchema)) {
-			path = "/eai/schema/CBS00030";
+			path = "/CBS00030";
 		}
 		
-		String url = domain + path;
+		StringBuffer sbUrl = new StringBuffer();
+		sbUrl.append("http://").append(domain).append(commonPath).append(path);		
+		String url = sbUrl.toString();
 		
 		log.info("url : {}\ninput : {}", url,input);
 		Map<String,Object> result = restTemplate.postForObject(url, input, Map.class);

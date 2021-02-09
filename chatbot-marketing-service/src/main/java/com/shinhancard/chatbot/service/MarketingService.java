@@ -58,7 +58,7 @@ public class MarketingService {
 			log.info("mapping eai schema result : {}", eaiMaprequest);			
 			Map<String, Object> eaiMapResponse = eaiSkillService.callEAISkill("CBS00030", eaiMaprequest);
 			applyEAIResponses.add(eaiMapResponse);
-		}		
+		}
 		
 		return getApplyMarketingInfoes(marketingManage, getStatus(applyEAIResponses));
 	}
